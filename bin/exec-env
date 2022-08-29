@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# PLAYDATE_SDK_PATH
+# https://sdk.play.date/1.9.0/#_set_playdate_sdk_path_environment_variable
+export PLAYDATE_SDK_PATH="$ASDF_INSTALL_PATH"

@@ -2,8 +2,7 @@
 
 # asdf-playdate [![Build](https://github.com/RobLoach/asdf-playdate/actions/workflows/build.yml/badge.svg)](https://github.com/RobLoach/asdf-playdate/actions/workflows/build.yml) [![Lint](https://github.com/RobLoach/asdf-playdate/actions/workflows/lint.yml/badge.svg)](https://github.com/RobLoach/asdf-playdate/actions/workflows/lint.yml)
 
-
-[playdate](https://sdk.play.date/inside-playdate) plugin for the [asdf version manager](https://asdf-vm.com).
+[Playdate SDK](https://sdk.play.date/inside-playdate) plugin for the [asdf version manager](https://asdf-vm.com).
 
 </div>
 
@@ -16,18 +15,15 @@
 
 # Dependencies
 
-**TODO: adapt this section**
-
-- `bash`, `curl`, `tar`: generic POSIX utilities.
-- `SOME_ENV_VAR`: set this environment variable in your shell config to load the correct version of tool x.
+- `git`
+- `curl`
+- `tar`
 
 # Install
 
 Plugin:
 
 ```shell
-asdf plugin add playdate
-# or
 asdf plugin add playdate https://github.com/RobLoach/asdf-playdate.git
 ```
 
@@ -44,7 +40,8 @@ asdf install playdate latest
 asdf global playdate latest
 
 # Now playdate commands are available
-pdc --help
+pdc --version
+PlaydateSimulator --help
 ```
 
 Check [asdf](https://github.com/asdf-vm/asdf) readme for more instructions on how to

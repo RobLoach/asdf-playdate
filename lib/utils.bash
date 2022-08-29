@@ -3,9 +3,9 @@
 set -euo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for playdate.
-GH_REPO="https://play.date/dev/"
+GH_REPO="https://download-keycdn.panic.com/playdate_sdk"
 TOOL_NAME="playdate"
-TOOL_TEST="pdc --help"
+TOOL_TEST="bin/pdc --version"
 
 fail() {
   echo -e "asdf-$TOOL_NAME: $*"
@@ -33,16 +33,43 @@ list_github_tags() {
 list_all_versions() {
   # TODO: Adapt this. By default we simply list the tag names from GitHub releases.
   # Change this function if playdate has other means of determining installable versions.
-  list_github_tags
+  #list_github_tags
+
+  # List all from https://download-keycdn.panic.com/playdate_sdk/Linux .
+  echo "1.10.0"
+  echo "1.11.0"
+  echo "1.11.1"
+  echo "1.12.0"
+  echo "1.12.1"
+  echo "1.12.2"
+  echo "1.12.3"
+  echo "1.9.0"
+  echo "1.9.1"
+  echo "1.9.2"
+  echo "1.9.3"
 }
 
 download_release() {
-  local version filename url
+  local version filename url platform extension
   version="$1"
   filename="$2"
 
+  if [ "$(uname)" == "Darwin" ]; then
+    platform="/"
+    extension="zip"
+  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    platform="/Linux"
+    extension="tar.gz"
+  elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+    platform="/Windows"
+    extension="exe"
+  elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+    platform="/Windows"
+    extension="exe"
+  fi
+
   # TODO: Adapt the release URL convention for playdate
-  url="$GH_REPO/archive/v${version}.tar.gz"
+  url="$GH_REPO${platform}/PlaydateSDK-${version}.${extension}"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -51,7 +78,7 @@ download_release() {
 install_version() {
   local install_type="$1"
   local version="$2"
-  local install_path="${3%/bin}/bin"
+  local install_path="${3%/bin}"
 
   if [ "$install_type" != "version" ]; then
     fail "asdf-$TOOL_NAME supports release installs only"
