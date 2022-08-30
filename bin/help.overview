@@ -1,0 +1,10 @@
+# Output should be freeform text. asdf decides how to reformat it.
+
+echo 'Basic usage:
+
+  asdf install playdate latest
+  asdf global playdate latest
+  PlaydateSimulator --help
+
+Check the asdf documentation for more instructions on how to install and manage versions of playdate.
+'

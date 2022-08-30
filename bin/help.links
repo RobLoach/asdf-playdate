@@ -1,0 +1,5 @@
+# Output should be <title>: <link>
+
+echo 'home-page: https://github.com/RobLoach/asdf-playdate
+playdate: https://play.date
+'
