@@ -15,7 +15,6 @@
 
 # Dependencies
 
-- `git`
 - `curl`
 - `tar`
 
