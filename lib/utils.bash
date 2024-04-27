@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for playdate.
-GH_REPO="https://download-keycdn.panic.com/playdate_sdk"
+GH_REPO="https://download-cdn.panic.com/playdate_sdk"
 TOOL_NAME="playdate"
 TOOL_TEST="bin/pdc --version"
 
@@ -35,7 +35,12 @@ list_all_versions() {
   # Change this function if playdate has other means of determining installable versions.
   #list_github_tags
 
-  # List all from https://download-keycdn.panic.com/playdate_sdk/Linux .
+  # List all from https://download-cdn.panic.com/playdate_sdk
+  echo "2.4.2"
+  echo "2.3.1"
+  echo "2.2.0"
+  echo "2.1.1"
+  echo "2.0.3"
   echo "1.10.0"
   echo "1.11.0"
   echo "1.11.1"
