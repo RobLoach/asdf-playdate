@@ -20,13 +20,19 @@
 
 # Install
 
-Plugin:
+The following covers how to install Playdate with asdf.
+
+## Plugin
+
+First, install the plugin with:
 
 ```shell
 asdf plugin add playdate https://github.com/RobLoach/asdf-playdate.git
 ```
 
-playdate:
+## Playdate
+
+Once the plugin is installed, you can install a version of the Playdate SDK:
 
 ```shell
 # Show all installable versions
@@ -45,6 +51,36 @@ PlaydateSimulator --help
 
 Check [asdf](https://github.com/asdf-vm/asdf) readme for more instructions on how to
 install & manage versions.
+
+## PLAYDATE_SDK_PATH
+
+Now that Playdate is set up, you can [add the `PLAYDATE_SDK_PATH` environment variable](https://sdk.play.date/2.4.2/Inside%20Playdate%20with%20C.html#_set_playdate_sdk_path_environment_variable) by appending the following to your shell's initialization script, like `~/.bashrc`...
+
+### Bash
+
+```
+. ~/.asdf/plugins/playdate/setup.bash
+```
+
+### zsh
+```
+. ~/.asdf/plugins/playdate/setup.zsh
+```
+
+### Fish
+```
+. ~/.asdf/plugins/playdate/setup.fish
+```
+
+### Nushell
+```
+. ~/.asdf/plugins/playdate/setup.nu
+```
+
+### Xonsh
+```
+. ~/.asdf/plugins/playdate/setup.xsh
+```
 
 # Contributing
 
