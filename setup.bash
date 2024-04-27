@@ -1,7 +1,7 @@
 function _asdf_playdate_absolute_dir_path {
-    local absolute_path
-    absolute_path="$( cd -P "$( dirname "$1" )" && pwd )"
-    echo "$absolute_path"
+  local absolute_path
+  absolute_path="$( cd -P "$( dirname "$1" )" && pwd )"
+  echo "$absolute_path"
 }
 
 function _asdf_playdate_update_playdate_home() {
