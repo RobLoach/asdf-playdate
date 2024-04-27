@@ -1,6 +1,6 @@
 function _asdf_playdate_absolute_dir_path {
   local absolute_path
-  absolute_path="$( cd -P "$( dirname "$1" )" && pwd )"
+  absolute_path="$(cd -P "$(dirname "$1")" && pwd)"
   echo "$absolute_path"
 }
 
