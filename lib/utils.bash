@@ -36,6 +36,7 @@ list_all_versions() {
   #list_github_tags
 
   # List all from https://download-cdn.panic.com/playdate_sdk
+  echo "2.5.0"
   echo "2.4.2"
   echo "2.3.1"
   echo "2.2.0"
