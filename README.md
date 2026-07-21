@@ -16,7 +16,10 @@
 # Dependencies
 
 - `curl`
-- `tar`
+- `tar` (Linux)
+- `unzip` (macOS)
+
+The Playdate SDK is available for x86_64 Linux and macOS. The Windows SDK ships as an installer, which this plugin does not support.
 
 # Install
 
