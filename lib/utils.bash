@@ -2,85 +2,67 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for playdate.
-GH_REPO="https://download-cdn.panic.com/playdate_sdk"
+DOWNLOAD_BASE_URL="https://download-cdn.panic.com/playdate_sdk"
 TOOL_NAME="playdate"
 TOOL_TEST="bin/pdc --version"
 
+plugin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 fail() {
-  echo -e "asdf-$TOOL_NAME: $*"
+  echo -e "asdf-$TOOL_NAME: $*" >&2
   exit 1
 }
 
 curl_opts=(-fsSL)
-
-# NOTE: You might want to remove this if playdate is not hosted on GitHub releases.
-if [ -n "${GITHUB_API_TOKEN:-}" ]; then
-  curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_API_TOKEN")
-fi
 
 sort_versions() {
   sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
     LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
 }
 
-list_github_tags() {
-  git ls-remote --tags --refs "$GH_REPO" |
-    grep -o 'refs/tags/.*' | cut -d/ -f3- |
-    sed 's/^v//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
+list_all_versions() {
+  # Discovered from the Panic CDN by scripts/discover-versions.bash
+  cat "$plugin_dir/share/versions.txt"
 }
 
-list_all_versions() {
-  # TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-  # Change this function if playdate has other means of determining installable versions.
-  #list_github_tags
+release_extension() {
+  case "$(uname -s)" in
+  Darwin)
+    echo "zip"
+    ;;
+  Linux)
+    echo "tar.gz"
+    ;;
+  *)
+    fail "Unsupported platform $(uname -s). The Playdate SDK is only available for Linux, macOS and Windows, and this plugin supports Linux and macOS."
+    ;;
+  esac
+}
 
-  # List all from https://download-cdn.panic.com/playdate_sdk
-  echo "2.7.1"
-  echo "2.7.0"
-  echo "2.6.2"
-  echo "2.6.1"
-  echo "2.6.0"
-  echo "2.5.0"
-  echo "2.4.2"
-  echo "2.3.1"
-  echo "2.2.0"
-  echo "2.1.1"
-  echo "2.0.3"
-  echo "1.10.0"
-  echo "1.11.0"
-  echo "1.11.1"
-  echo "1.12.0"
-  echo "1.12.1"
-  echo "1.12.2"
-  echo "1.12.3"
-  echo "1.9.0"
-  echo "1.9.1"
-  echo "1.9.2"
-  echo "1.9.3"
+release_url() {
+  local version="$1"
+
+  case "$(uname -s)" in
+  Darwin)
+    echo "$DOWNLOAD_BASE_URL/PlaydateSDK-${version}.zip"
+    ;;
+  Linux)
+    if [ "$(uname -m)" != "x86_64" ]; then
+      fail "The Playdate SDK for Linux is only available for x86_64, not $(uname -m)."
+    fi
+    echo "$DOWNLOAD_BASE_URL/Linux/PlaydateSDK-${version}.tar.gz"
+    ;;
+  *)
+    fail "Unsupported platform $(uname -s). The Playdate SDK is only available for Linux, macOS and Windows, and this plugin supports Linux and macOS."
+    ;;
+  esac
 }
 
 download_release() {
-  local version filename url platform extension
+  local version filename url
   version="$1"
   filename="$2"
-
-  if [ "$(uname)" == "Darwin" ]; then
-    platform="/"
-    extension="zip"
-  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    platform="/Linux"
-    extension="tar.gz"
-  elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
-    platform="/Windows"
-    extension="exe"
-  elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
-    platform="/Windows"
-    extension="exe"
-  fi
-
-  # TODO: Adapt the release URL convention for playdate
-  url="$GH_REPO${platform}/PlaydateSDK-${version}.${extension}"
+  url="$(release_url "$version")"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -99,7 +81,6 @@ install_version() {
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-    # TODO: Assert playdate executable exists.
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
     test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
