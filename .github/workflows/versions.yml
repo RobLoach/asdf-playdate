@@ -1,0 +1,24 @@
+name: Versions
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Discover versions
+        run: scripts/discover-versions.bash
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: Update Playdate SDK versions
+          title: Update Playdate SDK versions
+          body: Automated Playdate SDK version discovery from the Panic CDN.
+          branch: update-versions
