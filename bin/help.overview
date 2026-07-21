@@ -4,7 +4,7 @@ echo 'Basic usage:
 
   asdf install playdate latest
   asdf global playdate latest
-  PlaydateSimulator --help
+  pdc --version
 
 Check the asdf documentation for more instructions on how to install and manage versions of playdate.
 '
