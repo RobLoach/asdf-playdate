@@ -10,7 +10,7 @@ source "${plugin_dir}/lib/utils.bash"
 
 mkdir -p "$ASDF_DOWNLOAD_PATH"
 
-extension="$(release_extension)"
+extension="$(release_extension "$ASDF_INSTALL_VERSION")"
 release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.$extension"
 
 # Download the release to the download directory
@@ -21,12 +21,20 @@ case "$extension" in
 tar.gz)
   tar -xzf "$release_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 || fail "Could not extract $release_file"
   ;;
-zip)
-  # The macOS release is a zip holding PlaydateSDK.pkg, whose payload is rooted at PlaydateSDK/
+zip | pkg)
+  # The macOS release is a .pkg, wrapped in a zip from 1.9.3 onwards, whose
+  # payload is rooted at PlaydateSDK/
   extract_path="$ASDF_DOWNLOAD_PATH/extract"
-  unzip -q "$release_file" -d "$extract_path" || fail "Could not extract $release_file"
-  pkgutil --expand-full "$extract_path/PlaydateSDK.pkg" "$extract_path/expanded" || fail "Could not expand PlaydateSDK.pkg"
-  cp -R "$extract_path/expanded/PlaydateSDK.pkg/Payload/PlaydateSDK/." "$ASDF_DOWNLOAD_PATH" || fail "Could not copy the Playdate SDK payload"
+  pkg_file="$release_file"
+  if [ "$extension" = "zip" ]; then
+    unzip -q "$release_file" -d "$extract_path" || fail "Could not extract $release_file"
+    pkg_file="$extract_path/PlaydateSDK.pkg"
+  fi
+
+  pkgutil --expand-full "$pkg_file" "$extract_path/expanded" || fail "Could not expand $pkg_file"
+  payload="$(find "$extract_path/expanded" -type d -path '*/Payload/PlaydateSDK' -print -quit)"
+  [ -n "$payload" ] || fail "Could not find the Playdate SDK payload in $pkg_file"
+  cp -R "$payload/." "$ASDF_DOWNLOAD_PATH" || fail "Could not copy the Playdate SDK payload"
   rm -rf "$extract_path"
   ;;
 esac

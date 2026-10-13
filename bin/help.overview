@@ -3,7 +3,7 @@
 echo 'Basic usage:
 
   asdf install playdate latest
-  asdf global playdate latest
+  asdf set -u playdate latest
   pdc --version
 
 Check the asdf documentation for more instructions on how to install and manage versions of playdate.

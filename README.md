@@ -10,6 +10,7 @@
 
 - [Dependencies](#dependencies)
 - [Install](#install)
+- [PLAYDATE_SDK_PATH](#playdate_sdk_path)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -17,7 +18,7 @@
 
 - `curl`
 - `tar` (Linux)
-- `unzip` (macOS)
+- `unzip` and `pkgutil` (macOS)
 
 The Playdate SDK is available for x86_64 Linux and macOS. The Windows SDK ships as an installer, which this plugin does not support.
 
@@ -39,13 +40,13 @@ Once the plugin is installed, you can install a version of the Playdate SDK:
 
 ```shell
 # Show all installable versions
-asdf list-all playdate
+asdf list all playdate
 
 # Install specific version
 asdf install playdate latest
 
 # Set a version globally (on your ~/.tool-versions file)
-asdf global playdate latest
+asdf set -u playdate latest
 
 # Now playdate commands are available
 pdc --version
@@ -57,7 +58,7 @@ install & manage versions.
 
 ## PLAYDATE_SDK_PATH
 
-Now that Playdate is set up, you can [add the `PLAYDATE_SDK_PATH` environment variable](https://sdk.play.date/2.4.2/Inside%20Playdate%20with%20C.html#_set_playdate_sdk_path_environment_variable) by appending the following to your shell's initialization script, like `~/.bashrc`...
+Now that Playdate is set up, you can [add the `PLAYDATE_SDK_PATH` environment variable](https://sdk.play.date/Inside%20Playdate%20with%20C.html#_set_playdate_sdk_path_environment_variable) by appending the following to your shell's initialization script, like `~/.bashrc`...
 
 ### Bash
 
@@ -72,17 +73,23 @@ Now that Playdate is set up, you can [add the `PLAYDATE_SDK_PATH` environment va
 
 ### Fish
 ```
-. ~/.asdf/plugins/playdate/setup.fish
+source ~/.asdf/plugins/playdate/setup.fish
 ```
 
 ### Nushell
 ```
-. ~/.asdf/plugins/playdate/setup.nu
+source ~/.asdf/plugins/playdate/setup.nu
+```
+
+Nushell has no prompt hook of its own, so also register the function in your `config.nu`:
+
+```
+$env.config.hooks.env_change.PWD ++= [{ |before, after| asdf_update_playdate_home }]
 ```
 
 ### Xonsh
 ```
-. ~/.asdf/plugins/playdate/setup.xsh
+source ~/.asdf/plugins/playdate/setup.xsh
 ```
 
 # Contributing

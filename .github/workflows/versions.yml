@@ -13,10 +13,10 @@ jobs:
   discover:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Discover versions
         run: scripts/discover-versions.bash
-      - uses: peter-evans/create-pull-request@v7
+      - uses: peter-evans/create-pull-request@v8
         with:
           commit-message: Update Playdate SDK versions
           title: Update Playdate SDK versions
