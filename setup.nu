@@ -1,10 +1,12 @@
-def asdf_update_playdate_home [] {
-  let $playdate_path = (asdf which pdc)
+def --env asdf_update_playdate_home [] {
+  let pdc_path = (do --ignore-errors { asdf which pdc } | default "" | str trim)
 
-  if $playdate_path {
-    let $full_path = (realpath $playdate_path | lines | nth 0 | str trim)
-
-    let $PLAYDATE_SDK_PATH = ($full_path | path dirname | path dirname)
-    let-env PLAYDATE_SDK_PATH = $PLAYDATE_SDK_PATH
+  if ($pdc_path | is-not-empty) {
+    $env.PLAYDATE_SDK_PATH = ($pdc_path | path expand | path dirname | path dirname)
   }
 }
+
+# Nushell has no prompt hook to attach to automatically. Register the function
+# yourself in your config.nu, for example:
+#
+#   $env.config.hooks.env_change.PWD ++= [{ |before, after| asdf_update_playdate_home }]

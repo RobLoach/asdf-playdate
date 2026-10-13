@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 exec shellcheck -s bash -x \
-  bin/* -P lib/
+  bin/* scripts/*.bash setup.bash -P lib/

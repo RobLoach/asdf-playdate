@@ -26,9 +26,20 @@ list_all_versions() {
 }
 
 release_extension() {
+  local version="$1"
+
   case "$(uname -s)" in
   Darwin)
-    echo "zip"
+    # The earliest macOS releases shipped as a bare .pkg. Everything from
+    # 1.9.3 onwards ships as a .zip holding PlaydateSDK.pkg.
+    case "$version" in
+    1.9.0 | 1.9.1 | 1.9.2)
+      echo "pkg"
+      ;;
+    *)
+      echo "zip"
+      ;;
+    esac
     ;;
   Linux)
     echo "tar.gz"
@@ -44,7 +55,7 @@ release_url() {
 
   case "$(uname -s)" in
   Darwin)
-    echo "$DOWNLOAD_BASE_URL/PlaydateSDK-${version}.zip"
+    echo "$DOWNLOAD_BASE_URL/PlaydateSDK-${version}.$(release_extension "$version")"
     ;;
   Linux)
     if [ "$(uname -m)" != "x86_64" ]; then
@@ -65,7 +76,9 @@ download_release() {
   url="$(release_url "$version")"
 
   echo "* Downloading $TOOL_NAME release $version..."
-  curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+  # Not resuming with `-C -`: a complete leftover file makes the CDN answer the
+  # out-of-range Range request with a 416, which `-f` turns into a hard failure.
+  curl "${curl_opts[@]}" --retry 3 --retry-delay 2 -o "$filename" "$url" || fail "Could not download $url"
 }
 
 install_version() {
@@ -79,7 +92,9 @@ install_version() {
 
   (
     mkdir -p "$install_path"
-    cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+    # `-R`, not `-r`: BSD/macOS cp dereferences symlinks with the latter, which
+    # would flatten the symlinks inside the SDK's .app bundles.
+    cp -R "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
